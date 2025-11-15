@@ -1,0 +1,68 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Setup Flutter SDK
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+
+    - name: Cache Flutter dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.flutter-cache
+          build/cache
+        key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.yaml') }}
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Analyze code
+      run: flutter analyze --no-fatal-infos
+
+    - name: Run tests
+      run: flutter test
+
+    - name: Build APK
+      run: |
+        flutter build apk --release --split-per-abi
+      env:
+        ANDROID_HOME: ${{_ANDROID_SDK_ROOT}}
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-arm64-release
+        path: build/app/outputs/flutter-apk/app-arm64-release.apk
+
+    - name: Upload APK ( armeabi-v7a )
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-armeabi-v7a-release
+        path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+
+    - name: Upload APK ( x86_64 )
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-x86_64-release
+        path: build/app/outputs/flutter-apk/app-x86_64-release.apk

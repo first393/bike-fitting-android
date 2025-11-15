@@ -1,0 +1,31 @@
+name: bike_fitting_flutter
+description: AI驱动的自行车拟合应用（Android版）
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # 摄像头访问
+  camera: ^0.10.5+5
+  
+  # Google ML Kit姿态检测（基于MediaPipe）
+  google_mlkit_pose_detection: ^0.11.0
+  
+  # 权限请求
+  permission_handler: ^11.0.1
+  
+  # UI组件
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
